@@ -40,28 +40,35 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 ## 🚀 Setup & Local Installation
 
 #### 1. Clone the repository
-
+```
 git clone [https://github.com/ChewShen/DiscordTicketBot.git](https://github.com/ChewShen/DiscordTicketBot.git)
+```
 
-cd YourRepoName 
+Then, navigate into the new project folder:
+```bash
+cd DiscordTicketBot
+```
 
 #### 2. Initialize Virtual Environment
 
-*[You can skip this if you decide to run globally/locally/direct onto your machine]*\
-```python -m venv venv```
+(You can skip this if you decide to run it directly on your machine)
+```bash
+python -m venv venv
+```
 
 **Activate on Windows:** .\venv\Scripts\activate\
 **Activate on Mac/Linux:** source venv/bin/activate
 
 #### 3. Install Dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
 #### 4. Configure Environment Variables
 
-*[You can replace the .getenv part with the key directly if you decide to skip the enviroment part]*
+(You can replace the os.getenv part in the code with the keys directly if you decide to skip the environment file, but a .env file is recommended for security)
 
-Create a .env file and putthe configuration needed key inside.
+Create a .env file in the root directory and input your configuration keys:
 As example:
 
 DISCORD_TOKEN=your_discord_bot_token_here\
@@ -69,12 +76,23 @@ MONGO_URI=your_mongodb_atlas_connection_string_here\
 IT_LOG=your_admin_channel_id_here
 
 #### 5. Boot the Application
-
-run ```python main.py```
-
+```bash
+run python main.py
+```
 
 
 ## 📝 Changelog
+
+###### **v1.3: Modular Architecture & Audit Logging Polish**
+
+**Architecture & Refactoring:**
+* **Implemented Discord Cogs:** Refactored the monolithic `main.py` into a modular.
+* **OOP Migration:** Transitioned all command logic into Object-Oriented classes (`TicketsCog`, `AdminCog`), for improve code maintainability and readability.
+
+**Feature & UI Enhancements:**
+* **Dynamic Time Localization:** Integrated Discord's native Unix Timestamp formatting (`<t:timestamp:f>`) to automatically calculate and display localise timezon for the admins.
+* **Better Admin UI:** Upgraded the Admin Audit Log embed with better readability.
+
 * **v1.2:** Added a startup validation and error handling for lacking environment variables.
 * **v1.1:** Resolved a potential Ticket ID race condition under high concurrency by implementing MongoDB atomic counters (`$inc`) for thread-safe ID generation.
 * **v1.0:** Initial release. Implemented core CRUD functionality, RBAC, and global error handling. 

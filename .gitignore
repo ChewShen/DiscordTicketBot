@@ -8,3 +8,5 @@ env/
 # Python Cache
 __pycache__/
 *.pyc
+
+Monolith_main.py
