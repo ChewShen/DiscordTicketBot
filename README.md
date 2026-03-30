@@ -42,6 +42,7 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 #### 1. Clone the repository
 ```
 git clone https://github.com/ChewShen/DiscordTicketBot.git
+```
 
 Then, navigate into the new project folder:
 ```bash
