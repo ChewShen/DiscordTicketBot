@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
+IT_LOG = int(os.getenv("IT_LOG"))
 
 # Initialize the Discord Bot with default intents
 intents = discord.Intents.default()
@@ -102,6 +103,14 @@ class TicketModal(discord.ui.Modal):
         
         # Send the embed back to the user. 'ephemeral=True' means only they can see this message.
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # --- NEW LOGIC: SEND ALERT TO ADMIN CHANNEL ---
+        admin_channel = bot.get_channel(IT_LOG)
+        if admin_channel:
+            # We add a quick note so admins know who to contact
+            admin_alert_embed = embed.copy()
+            admin_alert_embed.title = f"🚨 NEW TICKET ALERT: #{new_ticket_id}"
+            await admin_channel.send(embed=admin_alert_embed)
 
 
 # --- THE SLASH COMMAND (The Trigger) ---
@@ -254,6 +263,35 @@ async def ticket_lookup(
         resolved_unix = int(datetime.fromisoformat(ticket["resolved_at"]).timestamp())
         embed.add_field(name="Resolved By", value=ticket["resolved_by"], inline=True)
         embed.add_field(name="Resolved At", value=f"<t:{resolved_unix}:f>", inline=True)
+
+    await ctx.followup.send(embed=embed, ephemeral=True)
+
+@bot.slash_command(
+    name="ticket_history", description="[Admin] View the 5 most recently closed tickets", default_member_permissions=discord.Permissions(administrator=True)
+    )
+
+async def ticket_history(ctx: discord.ApplicationContext):
+    await ctx.defer(ephemeral=True)
+
+    # Search for closed tickets, sort them by ID descending (newest first), and limit to 5
+    closed_tickets = await tickets_collection.find({"status": "Closed"}).sort("ticket_id", -1).limit(5).to_list(length=5)
+
+    if not closed_tickets:
+        await ctx.followup.send("No closed tickets found in the database.", ephemeral=True)
+        return
+
+    embed = discord.Embed(
+        title="📚 Recently Closed Tickets",
+        color=discord.Color.blue()
+    )
+
+    for ticket in closed_tickets:
+        resolved_unix = int(datetime.fromisoformat(ticket["resolved_at"]).timestamp())
+        embed.add_field(
+            name=f"Ticket #{ticket['ticket_id']} | User: {ticket['author_name']}",
+            value=f"**Issue:** {ticket['issue_description']}\n**Closed:** <t:{resolved_unix}:R> by {ticket['resolved_by']}",
+            inline=False
+        )
 
     await ctx.followup.send(embed=embed, ephemeral=True)
 
