@@ -30,6 +30,30 @@ async def on_ready():
     except Exception as e:
         print(f"❌ Failed to connect to MongoDB. Error: {e}")
 
+@bot.event
+async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.DiscordException):
+    # This triggers anytime ANY slash command fails
+    
+    # 1. Log the actual error to your terminal so you can fix it later
+    print(f"⚠️ CRITICAL COMMAND ERROR in /{ctx.command.name}: {error}")
+    
+    # 2. Build a graceful, professional apology for the user
+    error_embed = discord.Embed(
+        title="🔧 System Error",
+        description="Our ticketing system encountered an unexpected issue while processing your request. The IT team has been automatically notified.",
+        color=discord.Color.dark_red()
+    )
+    
+    # 3. Send it to the user. We use a try/except here just in case the error 
+    # was caused by Discord not allowing us to send messages!
+    try:
+        if ctx.interaction.response.is_done():
+            await ctx.followup.send(embed=error_embed, ephemeral=True)
+        else:
+            await ctx.respond(embed=error_embed, ephemeral=True)
+    except Exception as fallback_error:
+        print(f"Could not send error message to user: {fallback_error}")
+
 # --- THE MODAL (The Pop-up Form) ---
 class TicketModal(discord.ui.Modal):                              
     def __init__(self, *args, **kwargs):                         
@@ -131,8 +155,7 @@ async def ticket_view_open(ctx: discord.ApplicationContext):
     await ctx.followup.send(embed=embed, ephemeral=True)
 
 # --- THE UPDATE COMMAND (Resolving a Ticket) ---
-@bot.slash_command(name="ticket_resolve", description="[Admin] Mark an open IT ticket as resolved", default_member_permissions=discord.Permissions(administrator=True)
-)
+@bot.slash_command(name="ticket_resolve", description="[Admin] Mark an open IT ticket as resolved", default_member_permissions=discord.Permissions(administrator=True))
 async def ticket_resolve(
     ctx: discord.ApplicationContext,
     ticket_id: discord.Option(int, "The ID of the ticket to close (e.g., 1)", required=True) # type: ignore
@@ -189,6 +212,50 @@ async def ticket_resolve(
     except discord.NotFound:
          # This catches the error if the user left the server
          print(f"Could not find user {ticket['author_id']}.")
+
+        
+# --- THE AUDIT COMMAND (Looking up any ticket) ---
+@bot.slash_command(name="ticket_lookup", description="[Admin] Search for any ticket (Open or Closed) by its ID",
+    default_member_permissions=discord.Permissions(administrator=True))
+
+async def ticket_lookup(
+    ctx: discord.ApplicationContext,
+    ticket_id: discord.Option(int, "The ID of the ticket to lookup", required=True) # type: ignore
+):
+    await ctx.defer(ephemeral=True)
+
+    # Fetch the specific document
+    ticket = await tickets_collection.find_one({"ticket_id": ticket_id})
+
+    if not ticket:
+        await ctx.followup.send(f"❌ Error: Ticket #{ticket_id} could not be found.", ephemeral=True)
+        return
+
+    # Determine the color and status text based on the database state
+    is_open = ticket["status"] == "Open"
+    embed_color = discord.Color.red() if is_open else discord.Color.green()
+    status_icon = "🔴" if is_open else "🟢"
+
+    embed = discord.Embed(
+        title=f"{status_icon} Ticket #{ticket['ticket_id']} Audit Log",
+        color=embed_color
+    )
+    
+    # Format the creation date
+    created_unix = int(datetime.fromisoformat(ticket["created_at"]).timestamp())
+    
+    embed.add_field(name="Reported By", value=ticket["author_name"], inline=True)
+    embed.add_field(name="Status", value=ticket["status"], inline=True)
+    embed.add_field(name="Opened At", value=f"<t:{created_unix}:f>", inline=False)
+    embed.add_field(name="Issue Description", value=f"```\n{ticket['issue_description']}\n```", inline=False)
+
+    # If it is closed, show who closed it and when
+    if not is_open and ticket["resolved_at"]:
+        resolved_unix = int(datetime.fromisoformat(ticket["resolved_at"]).timestamp())
+        embed.add_field(name="Resolved By", value=ticket["resolved_by"], inline=True)
+        embed.add_field(name="Resolved At", value=f"<t:{resolved_unix}:f>", inline=True)
+
+    await ctx.followup.send(embed=embed, ephemeral=True)
 
 # Run the bot
 if __name__ == "__main__":
