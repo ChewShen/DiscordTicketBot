@@ -40,21 +40,29 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 ## 🚀 Setup & Local Installation
 
 **1. Clone the repository**
+
 git clone [https://github.com/YourUsername/YourRepoName.git](https://github.com/YourUsername/YourRepoName.git)
+
 cd YourRepoName 
 
 **2. Initialize Virtual Environment**
+
 [You can skip this if you decide to run globally/locally/direct onto your machine]
+
 python -m venv venv
-# Activate on Windows:
+
+**Activate on Windows:**
 .\venv\Scripts\activate
-# Activate on Mac/Linux:
+
+**Activate on Mac/Linux:**
 source venv/bin/activate
 
 **3. Install Dependencies**
+
 pip install -r requirements.txt
 
 **4. Configure Environment Variables**
+
 [You can replace the .getenv part with the key directly if you decide to skip the enviroment part]
 
 Create a .env file and putthe configuration needed key inside.
@@ -65,4 +73,5 @@ MONGO_URI=your_mongodb_atlas_connection_string_here
 IT_LOG=your_admin_channel_id_here
 
 **5. Boot the Application**
+
 run python main.py
