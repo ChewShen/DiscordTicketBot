@@ -82,7 +82,7 @@ run python main.py
 
 ## 📝 Changelog
 
-###### **v1.3: Modular Architecture & Audit Logging Polish**
+##### v1.3: Modular Architecture & Audit Logging Polish
 
 **Architecture & Refactoring:**
 * **Implemented Discord Cogs:** Refactored the monolithic `main.py` into a modular.
@@ -92,6 +92,9 @@ run python main.py
 * **Dynamic Time Localization:** Integrated Discord's native Unix Timestamp formatting (`<t:timestamp:f>`) to automatically calculate and display localise timezon for the admins.
 * **Better Admin UI:** Upgraded the Admin Audit Log embed with better readability.
 
-**v1.2:** Added a startup validation and error handling for lacking environment variables.
-**v1.1:** Resolved a potential Ticket ID race condition under high concurrency by implementing MongoDB atomic counters (`$inc`) for thread-safe ID generation.
-**v1.0:** Initial release. Implemented core CRUD functionality, RBAC, and global error handling. 
+##### v1.2:
+* Added a startup validation and error handling for lacking environment variables.
+##### v1.1:
+* Resolved a potential Ticket ID race condition under high concurrency by implementing MongoDB atomic counters (`$inc`) for thread-safe ID generation.
+##### v1.0:
+* Initial release. Implemented core CRUD functionality, RBAC, and global error handling. 
