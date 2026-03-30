@@ -1,4 +1,4 @@
-# 🎫 Enterprise IT Helpdesk Discord Bot
+# 🎫 IT Helpdesk Discord Bot
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Pycord](https://img.shields.io/badge/Pycord-v2.0+-red.svg)
@@ -39,39 +39,41 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 
 ## 🚀 Setup & Local Installation
 
-**1. Clone the repository**
+#### 1. Clone the repository
 
 git clone [https://github.com/YourUsername/YourRepoName.git](https://github.com/YourUsername/YourRepoName.git)
 
 cd YourRepoName 
 
-**2. Initialize Virtual Environment**
+#### 2. Initialize Virtual Environment
 
-[You can skip this if you decide to run globally/locally/direct onto your machine]
+*[You can skip this if you decide to run globally/locally/direct onto your machine]*\
+```python -m venv venv```
 
-python -m venv venv
+**Activate on Windows:** .\venv\Scripts\activate\
+**Activate on Mac/Linux:** source venv/bin/activate
 
-**Activate on Windows:**
-.\venv\Scripts\activate
-
-**Activate on Mac/Linux:**
-source venv/bin/activate
-
-**3. Install Dependencies**
+#### 3. Install Dependencies
 
 pip install -r requirements.txt
 
-**4. Configure Environment Variables**
+#### 4. Configure Environment Variables
 
-[You can replace the .getenv part with the key directly if you decide to skip the enviroment part]
+*[You can replace the .getenv part with the key directly if you decide to skip the enviroment part]*
 
 Create a .env file and putthe configuration needed key inside.
 As example:
 
-DISCORD_TOKEN=your_discord_bot_token_here
-MONGO_URI=your_mongodb_atlas_connection_string_here
+DISCORD_TOKEN=your_discord_bot_token_here\
+MONGO_URI=your_mongodb_atlas_connection_string_here\
 IT_LOG=your_admin_channel_id_here
 
-**5. Boot the Application**
+#### 5. Boot the Application
 
-run python main.py
+run ```python main.py```
+
+
+
+## 📝 Changelog
+* **v1.1:** Resolved a potential Ticket ID race condition under high concurrency by implementing MongoDB atomic counters (`$inc`) for thread-safe ID generation.
+* **v1.0:** Initial release. Implemented core CRUD functionality, RBAC, and global error handling. 

@@ -19,6 +19,7 @@ bot = discord.Bot(intents=intents)
 db_client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=5000)
 db = db_client.helpdesk_db  # This creates/connects to a database named 'helpdesk_db'
 tickets_collection = db.tickets  # This creates/connects to a collection named 'tickets'
+counters_collection = db.counters # Collection to store the atomic counter
 
 @bot.event
 async def on_ready():
@@ -74,8 +75,17 @@ class TicketModal(discord.ui.Modal):
         issue_description = self.children[0].value
         
         # 2. Generate a simple Ticket ID (Count existing tickets + 1)
-        ticket_count = await tickets_collection.count_documents({})
-        new_ticket_id = ticket_count + 1
+        # ticket_count = await tickets_collection.count_documents({})
+        # new_ticket_id = ticket_count + 1
+        
+        # This securely increments the 'ticket_id' counter by 1. If the counter doesn't exist yet, 'upsert=True' creates it.
+        counter_doc = await counters_collection.find_one_and_update(
+            {"_id": "ticket_id"},
+            {"$inc": {"sequence_value": 1}},
+            return_document=True, # We want the new number, not the old one
+            upsert=True # If this is the very first ticket ever, create the counter document
+        )
+        new_ticket_id = counter_doc["sequence_value"]
         
         # 3. Construct our JSON Document
         ticket_doc = {
