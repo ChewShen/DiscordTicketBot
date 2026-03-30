@@ -75,5 +75,6 @@ run ```python main.py```
 
 
 ## 📝 Changelog
+* **v1.2:** Added a startup validation and error handling for lacking environment variables.
 * **v1.1:** Resolved a potential Ticket ID race condition under high concurrency by implementing MongoDB atomic counters (`$inc`) for thread-safe ID generation.
 * **v1.0:** Initial release. Implemented core CRUD functionality, RBAC, and global error handling. 

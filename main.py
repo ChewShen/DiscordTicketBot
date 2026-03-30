@@ -1,5 +1,6 @@
 import discord  
 import os
+import sys
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
@@ -8,7 +9,24 @@ from datetime import datetime, timezone
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
-IT_LOG = int(os.getenv("IT_LOG"))
+RAW_IT_LOG = os.getenv("IT_LOG")
+
+missing_vars = []
+if not DISCORD_TOKEN: missing_vars.append("DISCORD_TOKEN")
+if not MONGO_URI: missing_vars.append("MONGO_URI")
+if not RAW_IT_LOG: missing_vars.append("IT_LOG")
+
+if missing_vars:
+    print(f"❌ FATAL STARTUP ERROR: Missing environment variables: {', '.join(missing_vars)}")
+    print("👉 Please check your .env file and ensure all required variables are set.")
+    sys.exit(1) # 1 means the script exited because of an error
+
+# 3. Now that we know it exists, it is safe to convert IT_LOG to an integer
+try:
+    IT_LOG = int(RAW_IT_LOG)
+except ValueError:
+    print("❌ FATAL STARTUP ERROR: IT_LOG must be a valid Discord Channel ID (numbers only).")
+    sys.exit(1)
 
 # Initialize the Discord Bot with default intents
 intents = discord.Intents.default()
@@ -77,7 +95,7 @@ class TicketModal(discord.ui.Modal):
         # 2. Generate a simple Ticket ID (Count existing tickets + 1)
         # ticket_count = await tickets_collection.count_documents({})
         # new_ticket_id = ticket_count + 1
-        
+
         # This securely increments the 'ticket_id' counter by 1. If the counter doesn't exist yet, 'upsert=True' creates it.
         counter_doc = await counters_collection.find_one_and_update(
             {"_id": "ticket_id"},
