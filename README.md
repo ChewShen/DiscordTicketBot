@@ -41,7 +41,7 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 
 #### 1. Clone the repository
 
-git clone [https://github.com/YourUsername/YourRepoName.git](https://github.com/YourUsername/YourRepoName.git)
+git clone [https://github.com/YourUsername/YourRepoName.git](https://github.com/ChewShen/DiscordTicketBot.git)
 
 cd YourRepoName 
 
