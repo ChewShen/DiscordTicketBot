@@ -5,19 +5,27 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)
 
-A lightweight, event-driven ticketing system built for Discord. This microservice simulates a modern corporate IT support environment, allowing employees to report technical issues via an intuitive front-end UI while providing IT administrators with a centralized, secure NoSQL database to track, audit, and resolve incidents.
+A lightweight, event-driven ticketing system built for Discord.
 
-## 📸 Project Previews
-*(Tip: Take a screenshot of your `/ticket_create` modal and the Green/Red Embed messages in Discord, save them in an `assets` folder, and link them here!)*
-* **Ticket Creation UI:** `[Screenshot Placeholder]`
-* **Admin Audit Log:** `[Screenshot Placeholder]`
+## ✨ Features
+*   **Ticket Management:** Users can instantly generate support tickets using the `/ticket_create` slash command.
+*   **Role-Based Access Control (RBAC):** Admin-only commands and restricted views for secure ticket resolution.
+*   **Persistent Cloud Storage:** All tickets, logs, and user data are securely stored and queried via MongoDB Atlas.
+*   **Audit Logging:** Automated logging of ticket creation and resolution times.
+*   **High Availability:** Integrated Flask web server running on a secondary thread to keep the worker instance alive in serverless/cloud environments.
+  
+## 🛠️ Tech Stack
+*   **Language:** Python 3.12+
+*   **Framework:** Pycord 
+*   **Database:** MongoDB Atlas 
+*   **Web Server:** Flask 
+*   **Deployment:** Render (Cloud Platform) + UptimeRobot
 
-## 🏗️ Architecture & Tech Stack
-This application implements a classic **3-Tier Client-Server Architecture** with a focus on asynchronous I/O and Role-Based Access Control (RBAC).
+## 🏗️ System Architecture
+This application utilizes a dual-thread approach to bypass standard cloud-hosting sleep cycles:
+1.  **Thread 1 (Application Layer):** Runs the asynchronous Discord bot event loop, handling WebSocket connections and API requests.
+2.  **Thread 2 (Network Layer):** Runs a lightweight Flask WSGI server bound to a dynamic environment port. This acts as a health-check endpoint for external ping services (like UptimeRobot) to prevent the host platform from suspending the container.
 
-* **Presentation Layer (Client):** Discord UI. Utilizes Slash Commands, interactive Modals, and formatted Embeds for seamless user experience.
-* **Application Layer (Middleware):** Python 3.x. Powered by the `py-cord` library for asynchronous event handling and gateway routing.
-* **Data Layer (Database):** MongoDB Atlas. Stores dynamic JSON/BSON ticket objects, accessed via the async `motor` driver to prevent thread blocking during CRUD operations.
 
 ## ✨ Core Features
 * **Asynchronous CRUD Operations:** Fully non-blocking database queries ensuring the bot remains responsive under load.
@@ -36,6 +44,8 @@ This application implements a classic **3-Tier Client-Server Architecture** with
 | `/ticket_resolve [ID]` | Administrator | Closes a ticket, updates the database state, and triggers a user DM. |
 | `/ticket_lookup [ID]` | Administrator | Pulls a complete historical audit log for any specific ticket ID. |
 | `/ticket_history` | Administrator | Displays the 5 most recently resolved tickets sorted by timestamp. |
+
+## 🖼️ Showcase
 
 ## 🚀 Setup & Local Installation
 
