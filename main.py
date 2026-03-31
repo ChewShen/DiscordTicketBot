@@ -52,27 +52,42 @@ async def on_ready():
 
 @bot.event
 async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.DiscordException):
-    # This triggers anytime ANY slash command fails
-    
-    # 1. Log the actual error to your terminal so you can fix it later
+    # 1. Print to the Render console for the Developer (You)
     print(f"⚠️ CRITICAL COMMAND ERROR in /{ctx.command.name}: {error}")
     
-    # 2. Build a graceful, professional apology for the user
-    error_embed = discord.Embed(
+    # 2. Build the graceful, professional apology for the User
+    user_error_embed = discord.Embed(
         title="🔧 System Error",
         description="Our ticketing system encountered an unexpected issue while processing your request. The IT team has been automatically notified.",
         color=discord.Color.dark_red()
     )
     
-    # 3. Send it to the user. We use a try/except here just in case the error 
-    # was caused by Discord not allowing us to send messages!
+    # Send the apology to the user (ephemeral so only they see it)
+    # Note: We use respond() because an error might happen before the bot defers
     try:
-        if ctx.interaction.response.is_done():
-            await ctx.followup.send(embed=error_embed, ephemeral=True)
-        else:
-            await ctx.respond(embed=error_embed, ephemeral=True)
-    except Exception as fallback_error:
-        print(f"Could not send error message to user: {fallback_error}")
+        await ctx.respond(embed=user_error_embed, ephemeral=True)
+    except discord.errors.InteractionResponded:
+        await ctx.followup.send(embed=user_error_embed, ephemeral=True)
+
+    # 3. ACTUALLY notify the IT Department in the #it-logs channel!
+    try:
+        RAW_IT_LOG = os.getenv("IT_LOG")
+        if RAW_IT_LOG:
+            log_channel = await bot.fetch_channel(int(RAW_IT_LOG))
+            
+            admin_alert_embed = discord.Embed(
+                title="🚨 Application Command Error",
+                description=f"A user triggered a critical error while using `/{ctx.command.name}`.",
+                color=discord.Color.red()
+            )
+            admin_alert_embed.add_field(name="User Experiencing Error", value=ctx.author.mention, inline=True)
+            admin_alert_embed.add_field(name="Channel", value=ctx.channel.mention, inline=True)
+            admin_alert_embed.add_field(name="Raw Error Traceback", value=f"```py\n{error}\n```", inline=False)
+            
+            await log_channel.send(embed=admin_alert_embed)
+    except Exception as e:
+        # If the bot fails to send the Discord message, print this final warning to Render
+        print(f"❌ FATAL: Could not send error report to IT channel. Reason: {e}")
 
 # Load the Cogs ---
 cogs_list = [

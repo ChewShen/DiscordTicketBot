@@ -1,6 +1,9 @@
 import discord
+import os
 from discord.ext import commands
 from datetime import datetime, timezone
+
+RAW_IT_LOG = os.getenv("IT_LOG")
 
 class AdminCog(commands.Cog):
     def __init__(self, bot):
@@ -14,6 +17,7 @@ class AdminCog(commands.Cog):
             )
     
     async def ticket_view_open(self, ctx: discord.ApplicationContext):
+        
         # 1. "Defer" the response. Discord requires the bot to reply within 3 seconds.
         # Since database searches can sometimes take a moment, we tell Discord to show a "bot is thinking..." message.
         await ctx.defer(ephemeral=True)
@@ -82,6 +86,13 @@ class AdminCog(commands.Cog):
         # 5. Notify the Admin in the channel
         admin_embed = discord.Embed(title=f"✅ Ticket #{ticket_id} Resolved", description="Database updated. User notified.", color=discord.Color.green())
         await ctx.followup.send(embed=admin_embed, ephemeral=True)
+
+        # Fetch the channel directly from Discord using self.bot
+        try:
+            log_channel = await self.bot.fetch_channel(int(RAW_IT_LOG))
+            await log_channel.send(f"🔒 **Ticket Resolved:** Ticket #{ticket_id} was closed by {ctx.author.mention}.")
+        except Exception as e:
+            print(f"⚠️ Audit Log Error: Could not find channel {RAW_IT_LOG}. Error: {e}")
 
         # 6. Notify the Original User via Direct Message (DM)
         try:

@@ -85,6 +85,12 @@ python main.py
 
 ## 📝 Changelog
 
+### [v1.3.2] - 2026-03-31
+**Fixed**
+*   Upgraded global error handler (`on_application_command_error`) to properly route exception tracebacks to the `#it-logs` admin channel.
+*   Resolved an `AttributeError` by correctly utilizing `await bot.fetch_channel()` to bypass empty cache issues during Discord API calls.
+*   Implemented ephemeral user-facing apologies to maintain UI cleanliness during critical backend failures.
+
 ##### v1.3: Modular Architecture & Audit Logging Polish
 
 **Architecture & Refactoring:**
