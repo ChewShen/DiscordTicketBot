@@ -12,7 +12,7 @@ class TicketModal(discord.ui.Modal):
         
         # Add a text input field to the modal
         self.add_item(discord.ui.InputText(
-            label="What is the IT issue?",
+            label="What is the issue?",
             style=discord.InputTextStyle.long,
             placeholder="E.g., My monitor won't turn on...",
             required=True
@@ -57,7 +57,7 @@ class TicketModal(discord.ui.Modal):
         # 5. Build a nice visual response (Embed) for the user
         embed = discord.Embed(
             title=f"🎫 Ticket #{new_ticket_id} Created",
-            description="Your IT support ticket has been submitted.",
+            description="Your support ticket has been submitted.",
             color=discord.Color.red()
         )
         embed.add_field(name="Issue Details", value=issue_description)
@@ -102,11 +102,11 @@ class TicketsCog(commands.Cog):
     # When the user types /ticket_create, show them the Modal
     @discord.slash_command(
                             name="ticket_create",
-                            description="Open a new IT Support ticket"
+                            description="Open a new Support ticket"
                            )
     
     async def ticket_create(self, ctx: discord.ApplicationContext):
-        modal = TicketModal(bot=self.bot, title="Create IT Ticket")
+        modal = TicketModal(bot=self.bot, title="Create Ticket")
         await ctx.send_modal(modal)
 
 # This function is required by Discord to load the Cog
