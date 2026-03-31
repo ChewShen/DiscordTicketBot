@@ -26,15 +26,6 @@ This application utilizes a dual-thread approach to bypass standard cloud-hostin
 1.  **Thread 1 (Application Layer):** Runs the asynchronous Discord bot event loop, handling WebSocket connections and API requests.
 2.  **Thread 2 (Network Layer):** Runs a lightweight Flask WSGI server bound to a dynamic environment port. This acts as a health-check endpoint for external ping services (like UptimeRobot) to prevent the host platform from suspending the container.
 
-
-## ✨ Core Features
-* **Asynchronous CRUD Operations:** Fully non-blocking database queries ensuring the bot remains responsive under load.
-* **Role-Based Access Control (RBAC):** Administrative commands (`/ticket_resolve`, `/ticket_view_open`) are securely locked at the API level using Discord's native permission system.
-* **Automated Audit Logging:** Real-time ticket receipts are automatically routed to a private, secure `#it-logs` channel for administrative tracking.
-* **Direct Notification System:** The bot automatically DMs users upon ticket resolution, closing the communication loop.
-* **Global Error Handling:** Custom `on_application_command_error` events gracefully catch and report API or database timeouts without crashing the application.
-* **Timezone Localization:** Utilizes Unix timestamps to automatically localize database UTC times to the end-user's local timezone.
-
 ## 🛠️ Command Directory
 
 | Command | Access Level | Description |
