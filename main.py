@@ -2,6 +2,7 @@ import discord
 import os
 import sys
 from dotenv import load_dotenv
+from keep_alive import keep_alive
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
 
@@ -84,4 +85,5 @@ for cog in cogs_list:
     print(f"⚙️ Loaded Sub-module: {cog}")
 
 if __name__ == "__main__":
+    keep_alive()
     bot.run(DISCORD_TOKEN)
