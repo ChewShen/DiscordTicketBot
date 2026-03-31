@@ -76,8 +76,9 @@ MONGO_URI=your_mongodb_atlas_connection_string_here\
 IT_LOG=your_admin_channel_id_here
 
 #### 5. Boot the Application
+run
 ```bash
-run python main.py
+python main.py
 ```
 
 

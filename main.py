@@ -21,7 +21,7 @@ if missing_vars:
     print("👉 Please check your .env file and ensure all required variables are set.")
     sys.exit(1) # 1 means the script exited because of an error
 
-# 3. Now that we know it exists, it is safe to convert IT_LOG to an integer
+# 3. Since it exist, it is safe to convert IT_LOG to an integer
 try:
     IT_LOG = int(RAW_IT_LOG)
 except ValueError:
