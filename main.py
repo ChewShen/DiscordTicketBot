@@ -37,7 +37,7 @@ bot = discord.Bot(intents=intents)
 # Server Selection Timeout is set to 5 seconds so it doesn't hang forever if the password is wrong
 db_client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=5000)
 bot.db = db_client.helpdesk_db  # Now every Cog can access self.bot.db!
-bot.admin_channel_id = IT_LOG   # Pass the channel ID in the backpack toor
+bot.admin_channel_id = IT_LOG   # Pass the channel ID in the backpack too
 
 @bot.event
 async def on_ready():

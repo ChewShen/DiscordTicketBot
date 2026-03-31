@@ -42,7 +42,7 @@ This pipeline demonstrates the request cycle when an end-user interacts with the
 
 This pipeline highlights the system's administrative commands and the safety nets. When an Admin triggers the /ticket_resolve command or any other admin level command, the request must pass the Role-Based Access Control (RBAC) validation check before proceeding.
 
-Once authorized, the system queries MongoDB, validates the ticket's current state (ensuring it is open), and performs an asynchronous update. The system then generates a nortification in a designated internal channel for managerial oversight, directly notifies the original end-user of the resolution, and finally sends an ephemeral UI confirmation to the acting Admin to gracefully close the Discord interaction.
+Once authorized, the system queries MongoDB, validates the ticket's current state (ensuring it is open), and performs an asynchronous update. The system then generates a notification in a designated internal channel for managerial oversight, directly notifies the original end-user of the resolution, and finally sends an ephemeral UI confirmation to the acting Admin to gracefully close the Discord interaction.
 
 ## 🛠️ Command Directory
 
@@ -132,7 +132,7 @@ MONGO_URI=your_mongodb_atlas_connection_string_here\
 IT_LOG=your_admin_channel_id_here
 
 #### 5. Boot the Application
-run
+
 ```bash
 python main.py
 ```
@@ -159,10 +159,10 @@ python main.py
 
 **Architecture & Refactoring:**
 * **Implemented Discord Cogs:** Refactored the monolithic `main.py` into a modular.
-* **OOP Migration:** Transitioned all command logic into Object-Oriented classes (`TicketsCog`, `AdminCog`), for improve code maintainability and readability.
+* **OOP Migration:** Transitioned all command logic into Object-Oriented classes (`TicketsCog`, `AdminCog`), for better code maintainability and readability.
 
 **Feature & UI Enhancements:**
-* **Dynamic Time Localization:** Integrated Discord's native Unix Timestamp formatting (`<t:timestamp:f>`) to automatically calculate and display localise timezon for the admins.
+* **Dynamic Time Localization:** Integrated Discord's native Unix Timestamp formatting (`<t:timestamp:f>`) to automatically calculate and display localise timezone for the admins.
 * **Better Admin UI:** Upgraded the Admin Audit Log embed with better readability.
 
 ##### v1.2:
